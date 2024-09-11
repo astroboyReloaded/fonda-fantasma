@@ -1,0 +1,16 @@
+extends components/layout
+
+block content
+  strong Hoy:
+  article#especial(class="especial-container")
+    h2 #{product.name}
+    each description in product.description
+      p
+        strong= description
+    data(value=product.price) #{product.price}
+    p *mas envío.
+    a(href="https://wa.me/p/7950486838382587/5216141764062" target="_blank" class="order-link") Hacer pedido
+    if product.showAvailability
+      span (Solo <data id="special-amount">#{product.availability}</data> disponibles)
+  h3.order-in-advacePTag **¡Haz tu pedido por adelantado y te lo llevamos a tu hora de comer!
+  //- button#calcDeliveryPrice_Btn(type="button") Calcula tu costo de envío

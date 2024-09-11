@@ -1,0 +1,88 @@
+extends components/layout
+
+block content
+  //- Variables:
+  - const title = 'Booo!'
+  - const especial = 'Pozole'
+  h1 Especial del día:
+  h2.slogan=especial
+  //- Switch
+  h2 Switch en Pug
+  - 
+    var age = 18
+  case age
+    when 0
+      p too young.
+    when 17
+      p almost there! 
+    when 18
+      p Welcome home baby!!!
+  
+  h2 if en Pug
+  - 
+    const authorized = false
+  if age >= 18 & authorized
+    p Pásale, Papi!
+  else if authorized
+    p All right then, go ahead.
+  else
+    p Uh uh...
+  unless authorized
+    p Sorry, bro, You're not authorized.
+
+  //- h2 Include
+  //- include components/test_include
+
+  h2 Iterators 
+  
+  -
+    const arr = ["a", "b", "c"]
+    const obj = {"a": 1, "b": 2, "c": 3}
+    var count = 0
+
+  ul 
+    each val, index in arr 
+      li #{index} = #{val}
+
+  ul
+    each val, key in obj 
+      li #{key} = #{val}
+
+  while count < 10
+    span=count++
+
+  h2 Mixins 
+  
+  mixin list1 
+
+    ul
+      li "js"
+      li "python"
+      li "C"
+
+  +list1 
+  +list1 
+
+  mixin list2(lan)
+    ul
+      each val in lan
+        li=val
+
+  - const lan1 = ["c", "c#", "c++"]
+  - const lan2 = ["ruby", "rust", "COBOL"]
+
+  +list2(lan1)
+  +list2(lan2)
+
+  mixin blockMix(text="default text")
+    h3=text
+    if block 
+      article 
+        block
+    else 
+      p No existe el producto.
+
+  +blockMix("Pollo en Pipian.")
+    p descripción del producto
+  +blockMix
+    p mmmh...
