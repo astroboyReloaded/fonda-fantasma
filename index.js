@@ -1,12 +1,12 @@
 const express = require('express');
 const morgan = require('morgan');
-
-const router = require('./router/router');
+const path = require('path');
 
 const app = express();
-const publicPath = __dirname.replace('app', 'public');
+const router = require('./src/app/router');
+const publicPath = path.join(__dirname, 'src', 'public');
 
-app.set('port', process.env.PORT || 3000);
+const port = process.env.PORT || 3000;
 app.set('views', `${publicPath}/templates`);
 app.set('view engine', 'pug');
 
@@ -14,4 +14,6 @@ app.use(express.static(publicPath));
 app.use(morgan('dev'));
 app.use('/', router);
 
-module.exports = app;
+app.listen(port, () => {
+  console.log(`Listening port: ${port}`);
+});
