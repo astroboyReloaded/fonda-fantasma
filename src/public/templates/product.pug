@@ -7,7 +7,7 @@ block content
     each description in product.description
       p
         strong= description
-    data(value=product.price) #{product.price}
+    data(value=product.price) $#{product.price}
     p *mas envío.
     a(href="https://wa.me/p/7950486838382587/5216141764062" target="_blank" class="order-link") Hacer pedido
     if product.showAvailability

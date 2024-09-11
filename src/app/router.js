@@ -3,7 +3,7 @@ const router = require('express').Router();
 router.get('/', async (_, res, next) => {
   try {
     const response = await fetch(
-      'https://orange-io-cms.onrender.com/api/product-data',
+      'https://astroboyreloaded.github.io/FF_API/especial.json',
     );
     const productData = await response.json();
     res.render('product', { product: productData });
