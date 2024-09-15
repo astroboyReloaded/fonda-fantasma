@@ -20,6 +20,7 @@ block content
 
   section#clasicos(class="clasicos-container")
     h2 Clasicos:
+    p (disponibles todos los días)
     each clasico, i in Clasicos
       article(id=`clasico-container_${i}`)
         h3=clasico.name
@@ -28,13 +29,14 @@ block content
             strong=description
         data(value=clasico.price) $#{clasico.price}
         .options-container 
-          h4 Opciones:
+          strong Elige entre:
           form(id=`${clasico.name}_options`, class="clasico-options-form")
           each option in clasico.options
               fieldset(class=`${clasico.colectionName}-options-fieldset`)
                 legend=option.name
-                each choice in option.choices
-                  label(for=`${clasico.name}-${option.name}`, class=`${option.type}-option-label`)
-                    input(type=option.type name=`${clasico.name}-${option.name}`)
+                .choice-container
+                  each choice in option.choices
+                    label(for=`${clasico.name}-${option.name}`, class=`${option.type}-option-label`)
+                      input(type=option.type name=`${clasico.name}-${option.name}`)
                     =choice
           

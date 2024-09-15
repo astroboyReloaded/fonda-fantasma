@@ -1,11 +1,11 @@
 section#calcDelivery_section
-  //- p 
+  strong Calcula el costo de envío a tu ubicación actual o a una dirección:
   form#calcDelivery_form
     span
       input#address(type="text" placeholder="dirección")
       small (opcional)
-    button#CalcDelivery_Btn(type="button") Calcula tu costo de envío
-    small No guardaremos tu hubicación hasta que hayas confirmado tu pedido.
+    button#CalcDelivery_Btn(type="button") Calcular envío
+    small.calc-delivery-small No recibiremos tu hubicación hasta que hayas confirmado tu pedido.
     p#delivery_price_tag
 
 script.
@@ -40,7 +40,7 @@ script.
         });
         const result = await response.json();
 
-        deliveryPrice_Tag.textContent = `Estimated Delivery Cost: $${result.delivery_cost.toFixed(2)}`;
+        deliveryPrice_Tag.textContent = `Costo de envío estimado: $${result.delivery_cost.toFixed(2)}`;
 
         // Initialize the map with the location
         initMap(client_location.latitude, client_location.longitude);

@@ -50,11 +50,10 @@ router.post('/api/calculate-delivery', async (req, res) => {
       const duration = data.rows[0].elements[0].duration.value / 60; // Time in minutes
       console.log('distance:', distance, 'duration:', duration);
       // CALCULATE DELIVERY PRICE
-      const distance_base_rate = 2.22; // units per km
-      const time_base_rate = 1.36; // units per minute
-      const base_rate =
+      const distance_base_rate = 4.44; // units per km
+      const time_base_rate = 1.5; // units per minute
+      const delivery_cost =
         distance_base_rate * distance + time_base_rate * duration;
-      const delivery_cost = base_rate * 2.1;
 
       res.json({ delivery_cost });
     } else {

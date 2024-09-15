@@ -186,7 +186,12 @@ data {
 }
 
 .calc-delivery-small {
-  font-size: 0.78em;
+  font-size: 0.72em;
+}
+
+#delivery_price_tag {
+  font-weight: 700;
+  color: var(--green);
 }
 
 .clasicos-container {
@@ -200,6 +205,10 @@ data {
   flex-direction: column;
   align-items: center;
   margin-block: 9px;
+}
+
+.choice-container {
+  display: flex;
 }
 
 @media screen and (min-width: 768px) {
