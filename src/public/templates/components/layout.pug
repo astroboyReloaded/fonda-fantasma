@@ -3,24 +3,11 @@ html(lang="es")
   head
     meta(charset="UTF-8")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    script(async src=`https://maps.googleapis.com/maps/api/js?key=${googleMapsApiKey}` defer)
     link(rel="stylesheet" href="css/style.css")
-    title Especial del Día
+    title=title 
   body 
-    header
-      .logo-container
-        img#logo-img(src="images/Logo-nobg.png", alt="Logo de orange io la silueta de una naranja simula un boton de encendido/apagado")
-        .logoText-container
-          h1 
-            span.first-letter O
-            | range i/o
-          p.slogan Fonda virtual
-      p
-        | Un platillo delicioso, saludable, y diferente cada día, directo a tu casa u hogar.
-      p
-        | Contáctanos por
-        a.contact-link(href="https://wa.me/526141764062?text=Hola,%20Fonda%20Fantasma!%20Quiero%20", target="_blank") WhatsApp
-          svg.open-in-new-pageIcon_svg(xmlns="http://www.w3.org/2000/svg", viewBox="0 0 512 512")
-            path.open-in-new-pageIcon_path(d="M320 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l82.7 0L201.4 265.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L448 109.3l0 82.7c0 17.7 14.3 32 32 32s32-14.3 32-32l0-160c0-17.7-14.3-32-32-32L320 0zM80 32C35.8 32 0 67.8 0 112L0 432c0 44.2 35.8 80 80 80l320 0c44.2 0 80-35.8 80-80l0-112c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 112c0 8.8-7.2 16-16 16L80 448c-8.8 0-16-7.2-16-16l0-320c0-8.8 7.2-16 16-16l112 0c17.7 0 32-14.3 32-32s-14.3-32-32-32L80 32z")
+    include menu/header.pug
 
     main 
       block content

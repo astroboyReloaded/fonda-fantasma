@@ -9,7 +9,9 @@ body {
   font-size: 18px;
   --orange: rgb(230, 101, 15);
   --green: rgb(1, 158, 1);
+  --brdrRd: 9px;
   position: relative;
+  height: 100%;
   min-height: 100vh;
 }
 
@@ -95,7 +97,7 @@ article {
 
 .especial-container {
   border: 3px solid var(--orange);
-  border-radius: 9px;
+  border-radius: var(--brdrRd);
   padding: 6px;
 }
 
@@ -127,7 +129,7 @@ data {
   left: 100%;
   margin: 9px 0;
   z-index: 1;
-  border-radius: 9px;
+  border-radius: var(--brdrRd);
   border: 2px solid var(--green);
   background-color: var(--green);
   color: white;
@@ -158,6 +160,46 @@ data {
   color: var(--green);
   font-weight: bold;
   margin-block: 12px 9px;
+}
+
+.calc-delivery-title {
+  margin-block: 9px 0;
+  font-size: 1rem;
+}
+
+#calcDelivery_form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 9px;
+}
+
+#CalcDelivery_Btn {
+  margin-block: 9px;
+  padding: 3px 6px;
+  border-radius: var(--brdrRd);
+  border: 2px solid var(--green);
+  background-color: var(--orange);
+  color: white;
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.calc-delivery-small {
+  font-size: 0.78em;
+}
+
+.clasicos-container {
+  border: 1px solid black;
+  border-radius: var(--brdrRd);
+}
+
+.clasicos-options-fieldset {
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-block: 9px;
 }
 
 @media screen and (min-width: 768px) {

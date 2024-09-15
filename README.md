@@ -1,0 +1,1 @@
+the delivery calculation must have a method to update the cost of gas and wage per minute.
