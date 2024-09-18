@@ -1,17 +1,30 @@
 section#calcDelivery_section
-  strong Calcula el costo de envío a tu ubicación actual o a una dirección:
-  form#calcDelivery_form
-    span
-      input#address(type="text" placeholder="dirección")
-      small (opcional)
-    button#CalcDelivery_Btn(type="button") Calcular envío
+  h2.calc-delivery-title
+    strong Calcula el costo de envío a tu ubicación actual o a una dirección en la ciudad de Chihuahua:
+  span
+    p#openAddress_form Introducir dirección de entrega (opcional)
+      svg(xmlns="http://www.w3.org/2000/svg", width="15px", height="18px", viewBox="0 0 48 60", class="drop-downIcon_svg closed")
+        path(d="M-4 24l27 33 27-33", class="drop-downIcon_path closed")
+  form.calcDelivery_form
+    #addressInputsContainer(style="display: none")
+      label(for="street")
+        input#calleYNumero(class="addressInput" type="text" name="street" autocomplete="street-address"  placeholder="Calle y número" required)
+        small *
+      label(for="colonia")
+        input#colonia(class="addressInput" type="text" name="colonia" placeholder="Colonia")
+      p Chihuahua, Chih., México.
+      label(for="zip")
+        input#CP(class="addressInput" type="text" name="zip" autocomplete="postal-code" placeholder="Código postal")
+    button#CalcDelivery_Btn(type="button") Calcular envío ahora
     small.calc-delivery-small No recibiremos tu hubicación hasta que hayas confirmado tu pedido.
     p#delivery_price_tag
+  script
+    include ../../../js/deliveryAdressForm.js
 
 script.
   const CalcDelivery_Btn = document.getElementById('CalcDelivery_Btn');
   const deliveryPrice_Tag = document.getElementById('delivery_price_tag');
-  const addressInput = document.getElementById('address');
+  const addressInputs = Array.from(document.querySelectorAll('.address'));
   const calcDelivery_Container = document.getElementById('calcDelivery_section');  
   let map;  // Google Maps object
   let marker;  // Marker on the map
@@ -19,14 +32,20 @@ script.
   document.addEventListener('DOMContentLoaded', function () {
     CalcDelivery_Btn.addEventListener('click', async () => {
       try {
-        let client_location;
+        // Validate address format before proceeding
+        if (addressInputs[0].value && !validateAddress()) {
+          deliveryPrice_Tag.textContent = 'Por favor, introduce una dirección válida.';
+          return;
+        }
 
+        let client_location;
         // Check if address is provided
-        const address = addressInput.value.trim();
+        const address = addressInputs[0].value 
+          ? addressInputs.map(inp => inp.value.trim()).join(' ').concat('Chihuahua, Chihuahua, México.')
+          : false;
         if (address) {
           // Get coordinates from address
-          console.log(address)
-          client_location = await getCoordinatesFromAddress(address);
+          client_location = await getCoordinatesFromAddress(address.trim());
         } else {
           // Get coordinates from geolocation
           client_location = await getClientLocation();
@@ -45,10 +64,54 @@ script.
         // Initialize the map with the location
         initMap(client_location.latitude, client_location.longitude);
       } catch (error) {
-        deliveryPrice_Tag.textContent = 'Error getting delivery cost: ' + error;
+        error === 'Geocode was not successful for the following reason: ZERO_RESULTS'
+        ? deliveryPrice_Tag.textContent = 'Dirección no localizada.'
+        : error;
+        initMap();
       }
     })
   });
+
+  // Function to validate address input fields
+  function validateAddress() {
+    const streetInput = addressInputs[0].value.trim();
+    const zipInput = addressInputs[2].value.trim();
+
+    // Basic regex patterns for validation
+    const streetRegex = /^(calle\s\d{1,3}(?:\w{1,2})?\s\d+|.+\s\d+)$/i  // Checks for street name followed by number
+    const zipRegex = /^\d{5}$/;      // Checks for a 5-digit postal code (ZIP)
+
+    // Validate street and number (non-empty and follows pattern)
+    if (!streetRegex.test(streetInput)) {
+      return false;
+    }
+
+    // Validate ZIP code (optional but if filled, must follow the pattern)
+    if (zipInput && !zipRegex.test(zipInput)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  function getCoordinatesFromAddress(address) {
+    const geocoder = new google.maps.Geocoder();
+    
+          console.log(address)
+    return new Promise((resolve, reject) => {
+      geocoder.geocode({ address: address }, (results, status) => {
+        if (status === 'OK') {
+          const location = results[0].geometry.location;
+          resolve({
+            latitude: location.lat(),
+            longitude: location.lng(),
+          });
+        } else {
+          reject('Geocode was not successful for the following reason: ' + status);
+        }
+      });
+    });
+  }
 
   function getClientLocation() {
     return new Promise((resolve, reject) => {
@@ -70,26 +133,9 @@ script.
     });
   }
 
-  function getCoordinatesFromAddress(address) {
-    const geocoder = new google.maps.Geocoder();
-    return new Promise((resolve, reject) => {
-      geocoder.geocode({ address: address }, (results, status) => {
-        if (status === 'OK') {
-          const location = results[0].geometry.location;
-          resolve({
-            latitude: location.lat(),
-            longitude: location.lng(),
-          });
-        } else {
-          reject('Geocode was not successful for the following reason: ' + status);
-        }
-      });
-    });
-  }
-
-  function initMap(lat, lng) {
-    const location = { lat: parseFloat(lat), lng: parseFloat(lng) };
-    if (!map) {
+  function initMap(lat = 0, lng = 0) {
+    const location = { lat: lat, lng: lng };
+    if (lat && lng) {
       map = new google.maps.Map(createMapContainer(), {
         zoom: 14,
         center: location,
@@ -97,19 +143,67 @@ script.
       marker = new google.maps.Marker({
         position: location,
         map: map,
-        title: 'Your Location',
+        draggable: true, // Make the marker draggable
+        title: 'Selecciona tu ubicación',
+      });
+      // Event listener for dragging the marker
+      google.maps.event.addListener(marker, 'dragend', function(event) {
+        const newLat = event.latLng.lat();
+        const newLng = event.latLng.lng();
+
+        // Optionally, reverse-geocode the new coordinates to get the address
+        reverseGeocode(newLat, newLng);
+      });
+
+      // Event listener for clicking the map to move the marker
+      google.maps.event.addListener(map, 'click', function(event) {
+        const clickedLat = event.latLng.lat();
+        const clickedLng = event.latLng.lng();
+
+        // Move the marker to the clicked location
+        marker.setPosition(new google.maps.LatLng(clickedLat, clickedLng));
+
+        // Optionally, reverse-geocode the clicked coordinates
+        reverseGeocode(clickedLat, clickedLng);
       });
     } else {
-      map.setCenter(location);
-      marker.setPosition(location);
+      createMapContainer(false);
     }
-  }
+  };
 
-  function createMapContainer() {
-    const map_Container = document.createElement('div');
-    map_Container.id = 'map';
-    map_Container.style.width = '100%';
-    map_Container.style.height = '180px';
-    calcDelivery_Container.appendChild(map_Container);
-    return map_Container;
+  // Function to reverse-geocode coordinates to get the address
+  function reverseGeocode(lat, lng) {
+    const geocoder = new google.maps.Geocoder();
+    const latLng = { lat: lat, lng: lng };
+
+    geocoder.geocode({ location: latLng }, (results, status) => {
+      console.log(results)
+      if (status === 'OK' && results[0]) {
+        const address = results[0].formatted_address;
+        document.getElementById('calleYNumero').value = address;  // Populate the address field
+      } else {
+        console.error('Geocoder failed due to: ' + status);
+      }
+    });
+  };
+
+  function createMapContainer(location = true) {
+    let map_Container = document.getElementById('map');
+    if (map_Container) {
+      return map_Container;
+    }
+    if (location) {
+      map_Container = document.createElement('div');
+      map_Container.id = 'map';
+      map_Container.style.width = '100%';
+      map_Container.style.height = '180px';
+      calcDelivery_Container.appendChild(map_Container);
+      return map_Container;
+    } else {
+      map_Container.innerHTML = `
+      <p>Por favor verifica que la dirección está correcta.</p>
+      <p>Para mayor precisión, introduce una colonia o un código postal.</p>
+      <p>Para usar tu ubicación actual deja los campos de la dirección en blanco y presiona el botón de "calcular envío ahora"</p>
+      `
+    }
   }
