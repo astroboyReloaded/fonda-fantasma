@@ -3,7 +3,6 @@ const svg = document.querySelector('.drop-downIcon_path');
 document
   .getElementById('openAddress_form')
   .addEventListener('click', function () {
-    console.log('CalcDelivery_Btn clicked');
     const addressInputsContainer = document.getElementById(
       'addressInputsContainer',
     );

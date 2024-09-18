@@ -24,7 +24,7 @@ section#calcDelivery_section
 script.
   const CalcDelivery_Btn = document.getElementById('CalcDelivery_Btn');
   const deliveryPrice_Tag = document.getElementById('delivery_price_tag');
-  const addressInputs = Array.from(document.querySelectorAll('.address'));
+  const addressInputs = Array.from(document.querySelectorAll('.addressInput'));
   const calcDelivery_Container = document.getElementById('calcDelivery_section');  
   let map;  // Google Maps object
   let marker;  // Marker on the map
@@ -32,8 +32,10 @@ script.
   document.addEventListener('DOMContentLoaded', function () {
     CalcDelivery_Btn.addEventListener('click', async () => {
       try {
+        console.log('try catch block', addressInputs)
         // Validate address format before proceeding
         if (addressInputs[0].value && !validateAddress()) {
+          console.log('validating address input')
           deliveryPrice_Tag.textContent = 'Por favor, introduce una dirección válida.';
           return;
         }
@@ -50,7 +52,6 @@ script.
           // Get coordinates from geolocation
           client_location = await getClientLocation();
         }
-
         // Send location to the server for delivery cost calculation
         const response = await fetch('/api/calculate-delivery', {
           method: 'POST',
@@ -66,8 +67,8 @@ script.
       } catch (error) {
         error === 'Geocode was not successful for the following reason: ZERO_RESULTS'
         ? deliveryPrice_Tag.textContent = 'Dirección no localizada.'
-        : error;
-        initMap();
+        : deliveryPrice_Tag.textContent = error;
+        //- initMap();
       }
     })
   });
